@@ -34,6 +34,46 @@ int main()
 
   PID pid;
   // TODO: Initialize the pid variable.
+  // some init value, still need to be twiddle.
+  // manual tuning tips: https://discussions.udacity.com/t/pid-instability-manual-twiddle-tuning/334048/2?u=sun.pochin
+  // Try to find a value for Kp which keeps you car on the track atleast for 2-3 seconds. The car might oscillate but that is fine.
+  // To tune down the oscillation gradually try with increased Kd values.
+  // Increasing Kd reduces oscillations, whereas increasing Kp increases 
+  // the magnitude of turning. You need to find a sweet spot where the car turns 
+  // sufficiently but does not oscillate. 
+  // Once you find Kp and Kd values which work well, try very small values of Ki. 
+  // Don’t be surprised if Ki is many orders of magnitude lower than Kp or Kd.
+  // It may also help to have another PID controller to control the speed. Having a nearly constant speed makes controlling steering a lot easier.
+  
+  // turning not enough, failed at the first turning. increase Kp.
+  pid.Init(1.0, 0.0, 1.0);
+
+  pid.Init(1.1, 0.0, 1.0);
+
+  pid.Init(1.21, 0.0, 1.0);
+
+  pid.Init(1.0, 0.0, 4.59);
+  pid.Init(0.1, 0.0, 0.459);
+
+  // // Kp, 1.1 ^ 16 = 4.59
+  // // Oscillates too much. Kd too small, icreate Kd.
+  // pid.Init(4.59, 0.0, 21.11);
+
+  // // Kd, 1.1 ^ 40 = 45.2592555682
+  // // Oscillates too much?. Kd too small, icreate Kd.
+  // pid.Init(4.59, 0.0, 45.26);
+
+  // // Kd, 1.1 ^ 50 = 117.39
+  // // Oscillates too much?. Kd too small, icreate Kd.
+  // pid.Init(4.59, 0.0, 117.39);
+
+  // // Kp, 1.1 ^ 8 = 2.14
+  // // Kd, 1.1 ^ 50 = 117.39
+  // pid.Init(2.14, 0.0, 117.39);
+  // // Kd, 1.1 ^ 55 = 189.06
+  // pid.Init(2.14, 0.0, 188.06);
+
+  
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -57,13 +97,27 @@ int main()
           * NOTE: Feel free to play around with the throttle and speed. Maybe use
           * another PID controller to control the speed!
           */
-          
+          pid.UpdateError(cte);
+          // note: I'm really bad at these degrees/radius conversion. :(
+          // https://discussions.udacity.com/t/what-does-steering-value-1-1-mean/478335/4?u=sun.pochin
+          // steer_value = deg2rad(pid.TotalError() ) / deg2rad(25) ;
+          // steer_value = pid.TotalError() / deg2rad(25) ;
+          steer_value = pid.TotalError();
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+          std::cout << "frame_cnt: " << pid._frame_cnt << std::endl;
+          // // reset the simulation after 1000 frames, it's for the twiddle algorithm.
+          // if (1000 == pid._frame_cnt) {
+          //   pid._frame_cnt = 0;
+          //   std::string msg = "42[\"reset\",{}]";
+          //   ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+          // }
+          // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+          // std::cout << "angle : " << angle << ", pid.steer: " << pid._steer << ", steer_value : " << steer_value << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = 0.3;
+
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);

@@ -12,7 +12,7 @@ public:
 
   /*
   * Coefficients
-  */ 
+  */
   double Kp;
   double Ki;
   double Kd;
@@ -41,6 +41,13 @@ public:
   * Calculate the total PID error.
   */
   double TotalError();
+
+  // remember previous CTE
+  double _cte_prev;
+
+  // record this to send reset cmd.
+  int _frame_cnt;
+
 };
 
 #endif /* PID_H */
