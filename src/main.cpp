@@ -43,37 +43,19 @@ int main()
   // sufficiently but does not oscillate. 
   // Once you find Kp and Kd values which work well, try very small values of Ki. 
   // Don’t be surprised if Ki is many orders of magnitude lower than Kp or Kd.
-  // It may also help to have another PID controller to control the speed. Having a nearly constant speed makes controlling steering a lot easier.
+  // It may also help to have another PID controller to control the speed. 
+  // Having a nearly constant speed makes controlling steering a lot easier.
   
   // turning not enough, failed at the first turning. increase Kp.
-  pid.Init(1.0, 0.0, 1.0);
+  pid.Init(1.0, 0.0, 0.0);
 
-  pid.Init(1.1, 0.0, 1.0);
+  // Kp : 1, Kd: 1.1 ^ 16
+  // oscillates too much after the bridge, tune down by 10.
+  // pid.Init(1.0, 0.0, 4.59);
 
-  pid.Init(1.21, 0.0, 1.0);
+  // (1.1 ^ 8) * 0.1 = 0.214, (1.1 ^ 45)  * 0.1  = 7.2890
+  pid.Init(0.214, 0.01, 7.2890);
 
-  pid.Init(1.0, 0.0, 4.59);
-  pid.Init(0.1, 0.0, 0.459);
-
-  // // Kp, 1.1 ^ 16 = 4.59
-  // // Oscillates too much. Kd too small, icreate Kd.
-  // pid.Init(4.59, 0.0, 21.11);
-
-  // // Kd, 1.1 ^ 40 = 45.2592555682
-  // // Oscillates too much?. Kd too small, icreate Kd.
-  // pid.Init(4.59, 0.0, 45.26);
-
-  // // Kd, 1.1 ^ 50 = 117.39
-  // // Oscillates too much?. Kd too small, icreate Kd.
-  // pid.Init(4.59, 0.0, 117.39);
-
-  // // Kp, 1.1 ^ 8 = 2.14
-  // // Kd, 1.1 ^ 50 = 117.39
-  // pid.Init(2.14, 0.0, 117.39);
-  // // Kd, 1.1 ^ 55 = 189.06
-  // pid.Init(2.14, 0.0, 188.06);
-
-  
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
