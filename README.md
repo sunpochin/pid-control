@@ -2,6 +2,7 @@
 Self-Driving Car Engineer Nanodegree Program
 
 # Overview
+This project implements a PID Controller in the simulator to drive a car.
 
 # Rubric Points
 
@@ -29,8 +30,8 @@ The PID implementation is in the file [src/PID.cpp](https://github.com/sunpochin
 
 
 ### Describe how the final hyperparameters were chosen.
-I started with setting hypterparameters ```Kp, Ki, Kd``` to ```(1, 0, 1)``` and multiple ```Kp``` and ```Kd``` with powers of 1.1 . With ```Kp, Ki, Kd``` = ```1.0, 0.0, 4.59``` , the car can compelete a lap with large swinging. <br>
-So I tried tuning down hyperparameters by 1 magnitude, using powers of 1.1 * 0.1 . Finally I settled with ```Kp``` = ```0.214  ( (1.1 ^ 8) * 0.1 )``` , ```Kd``` = ```7.2890 ( (1.1 ^ 45)  * 0.1 )```. <br>
+I haven't succeeded in implementing a working Twiddle algorithm for this project, so I manually tuned hypterparameters with powers of 1.1. With ```Kp, Ki, Kd``` = ```1.0, 0.0, 4.59``` , the car can compelete a lap with large swinging. <br>
+Then I tried tuning down hyperparameters by 1 magnitude, using powers of 1.1 * 0.1 . Finally I settled with ```Kp``` = ```0.214  ( (1.1 ^ 8) * 0.1 )``` , ```Kd``` = ```7.2890 ( (1.1 ^ 45)  * 0.1 )```. <br>
 ```Ki``` seems doesn't affect the result much, 0 or 0.01 both worked.
 
 
